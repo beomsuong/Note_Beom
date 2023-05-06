@@ -29,56 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.lime[600]
   ];
 
-  List<TimePlannerTask> tasks = [
-    TimePlannerTask(
-      color: Colors.purple,
-      dateTime: TimePlannerDateTime(
-          day: 0,
-          hour: Random().nextInt(18) + 6,
-          minutes: Random().nextInt(60)),
-      minutesDuration: Random().nextInt(90) + 30,
-      daysDuration: 1,
-      child: Text(
-        'this is a demo',
-        style: TextStyle(color: Colors.grey[350], fontSize: 12),
-      ),
-    ),
-  ];
-
-  void _addObject(BuildContext context) {
-    List<Color?> colors = [
-      Colors.purple,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.lime[600]
-    ];
-
-    setState(() {
-      tasks.add(
-        TimePlannerTask(
-          color: colors[Random().nextInt(colors.length)],
-          dateTime: TimePlannerDateTime(
-              day: 0,
-              hour: Random().nextInt(18) + 6,
-              minutes: Random().nextInt(60)),
-          minutesDuration: Random().nextInt(90) + 30,
-          daysDuration: 1,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('You click on time planner object')));
-          },
-          child: Text(
-            'this is a demo',
-            style: TextStyle(color: Colors.grey[350], fontSize: 12),
-          ),
-        ),
-      );
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Random task added to time planner!')));
-  }
+  List<TimePlannerTask> tasks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -130,32 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
             context: context,
             builder: (BuildContext context) {
               return addDialog(
-                onAdd: (int className, DateTime starttime, DateTime endtime) {
+                onAdd: (String className, int classday, DateTime starttime,
+                    DateTime endtime) {
                   setState(() {
-                    _addObject(context);
-                    tasks.add(
-                      TimePlannerTask(
-                        color: colors[Random().nextInt(colors.length)],
-                        dateTime: TimePlannerDateTime(
-                            day: className,
-                            hour: starttime.hour,
-                            minutes: Random().nextInt(60)),
-                        minutesDuration: Random().nextInt(90) + 30,
-                        daysDuration: 1,
-                        onTap: () {
-                          print("!@3");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'You click on time planner object')));
-                        },
-                        child: Text(
-                          'this is a d1emo',
-                          style:
-                              TextStyle(color: Colors.grey[350], fontSize: 12),
-                        ),
-                      ),
-                    );
+                    retunrdata(className, classday, starttime, endtime);
                   });
                 },
 
@@ -174,21 +103,22 @@ class _MyHomePageState extends State<MyHomePage> {
     dropdownValue = list.first;
   }
 
-  void retunrdata(DateTime starttime, DateTime endtime) {
+  void retunrdata(
+      String classname, int classday, DateTime starttime, DateTime endtime) {
     setState(() {
       tasks.add(
         TimePlannerTask(
           color: colors[Random().nextInt(colors.length)],
           dateTime: TimePlannerDateTime(
-              day: 1, hour: starttime.hour, minutes: starttime.minute),
-          minutesDuration: Random().nextInt(90) + 30,
+              day: classday, hour: starttime.hour, minutes: starttime.minute),
+          minutesDuration: endtime.difference(starttime).inMinutes,
           daysDuration: 1,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('You click on time planner object')));
           },
           child: Text(
-            '제발되라',
+            classname,
             style: TextStyle(color: Colors.grey[350], fontSize: 12),
           ),
         ),
