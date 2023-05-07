@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:metro_beom/Appbar.dart';
 import 'package:time_planner/time_planner.dart';
 import 'addDialog.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -19,6 +21,15 @@ class MyHomePage extends StatefulWidget {
 
 late DateTime starttime;
 late DateTime endtime;
+Map<String, List<List<dynamic>>> datas = {
+  '수학': [
+    [1, 9, 30, 60],
+    [2, 9, 30, 60],
+  ],
+  '과학': [
+    [3, 9, 30, 60],
+  ]
+}; //데이터는 이렇게 여러게로 저장할래요
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Color?> colors = [
@@ -27,6 +38,20 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.green,
     Colors.orange,
     Colors.lime[600]
+  ];
+
+  List<String> days = [
+    //가장 빠른 요일을 저장하는 리스트
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.monday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.tuesday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now().add(
+        Duration(days: (DateTime.wednesday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.thursday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.friday - DateTime.now().weekday) % 7))),
   ];
 
   List<TimePlannerTask> tasks = [];
@@ -40,38 +65,36 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Center(
           child: TimePlanner(
-            startHour: 9,
-            endHour: 23,
-            style: TimePlannerStyle(
-              // cellHeight: 30,
-              //cellWidth: 60,
-              showScrollBar: true,
-            ),
-            headers: const [
-              TimePlannerTitle(
-                title: "sunday",
+              startHour: 9,
+              endHour: 18,
+              style: TimePlannerStyle(
+                // cellHeight: 30,
+                //cellWidth: 60,
+                showScrollBar: true,
               ),
-              TimePlannerTitle(
-                title: "monday",
-              ),
-              TimePlannerTitle(
-                title: "tuesday",
-              ),
-              TimePlannerTitle(
-                title: "wednesday",
-              ),
-              TimePlannerTitle(
-                title: "thursday",
-              ),
-              TimePlannerTitle(
-                title: "friday",
-              ),
-              TimePlannerTitle(
-                title: "saturday",
-              ),
-            ],
-            tasks: tasks,
-          ),
+              headers: [
+                TimePlannerTitle(
+                  title: "monday",
+                  date: days[0].toString(),
+                ),
+                TimePlannerTitle(
+                  title: "tuesday",
+                  date: days[1].toString(),
+                ),
+                TimePlannerTitle(
+                  title: "wednesday",
+                  date: days[2].toString(),
+                ),
+                TimePlannerTitle(
+                  title: "thursday",
+                  date: days[3].toString(),
+                ),
+                TimePlannerTitle(
+                  title: "friday",
+                  date: days[4].toString(),
+                ),
+              ],
+              tasks: tasks),
         ),
         bottomNavigationBar: btmappbar(),
         floatingActionButton: FloatingActionButton(
@@ -81,8 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
             context: context,
             builder: (BuildContext context) {
               return addDialog(
+                //다이얼로그에서 입력받은 값
                 onAdd: (String className, int classday, DateTime starttime,
-                    DateTime endtime) {
+                    int endtime) {
                   setState(() {
                     retunrdata(className, classday, starttime, endtime);
                   });
@@ -95,27 +119,96 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
   }
 
+  int i = 0;
   List<String> list = <String>['월', '화', '수', '목', '금'];
   String? dropdownValue;
   @override
   void initState() {
+    for (var key in datas.keys) {
+      final usercol =
+          FirebaseFirestore.instance.collection("!@#users12").doc(key);
+      usercol.set({});
+
+      for (final value in datas[key]!) {
+        i++;
+
+        final usercol =
+            FirebaseFirestore.instance.collection("!@#users12").doc(key);
+        usercol.update({
+          i.toString(): value,
+        });
+        int day = value[0];
+        int hour = value[1];
+        int minutes = value[2];
+        tasks.add(
+          TimePlannerTask(
+            color: colors[Random().nextInt(colors.length)],
+            dateTime: TimePlannerDateTime(
+                day: value[0], hour: value[1], minutes: value[2]),
+            minutesDuration: value[3],
+            daysDuration: 1,
+            onTap: () {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('You click on $key')));
+              print(datas);
+              tasks.removeWhere((task) =>
+                  task.dateTime.day == value[0] &&
+                  task.dateTime.hour == value[1] &&
+                  task.dateTime.minutes == value[2]);
+              datas[key]?.removeWhere((value) =>
+                  value[0] == day && value[1] == hour && value[2] == minutes);
+              if (datas[key]?.isEmpty ?? false) {
+                datas.remove(key);
+              }
+              print(datas);
+              setState(() {});
+            },
+            child: Text(
+              key,
+              style: TextStyle(color: Colors.grey[350], fontSize: 12),
+            ),
+          ),
+        );
+      }
+    }
     super.initState();
     dropdownValue = list.first;
   }
 
   void retunrdata(
-      String classname, int classday, DateTime starttime, DateTime endtime) {
+      //데이터를 추가하는 부분
+      String classname,
+      int classday,
+      DateTime starttime,
+      int endtime) {
     setState(() {
+      datas[classname] = [
+        [1, starttime.hour, starttime.minute, endtime]
+      ];
       tasks.add(
         TimePlannerTask(
           color: colors[Random().nextInt(colors.length)],
           dateTime: TimePlannerDateTime(
               day: classday, hour: starttime.hour, minutes: starttime.minute),
-          minutesDuration: endtime.difference(starttime).inMinutes,
+          minutesDuration: endtime,
           daysDuration: 1,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('You click on time planner object')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('You click on $classname ')));
+            print(datas);
+            tasks.removeWhere((task) =>
+                task.dateTime.day == classday &&
+                task.dateTime.hour == starttime.hour &&
+                task.dateTime.minutes == starttime.minute);
+            datas[classname]?.removeWhere((value) =>
+                value[0] == classday &&
+                value[1] == starttime.hour &&
+                value[2] == starttime.minute);
+            if (datas[classname]?.isEmpty ?? false) {
+              datas.remove(classname);
+            }
+            print(datas);
+            setState(() {});
           },
           child: Text(
             classname,
