@@ -17,6 +17,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables(); // 추가
   await Firebase.initializeApp();
+
   FlutterConfig.get('apiKey');
 
   runApp(const MyApp());
