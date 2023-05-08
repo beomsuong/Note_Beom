@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
+import 'package:intl/intl.dart';
 
 class addDialog extends StatefulWidget {
   final Function(String, int, DateTime, int) onAdd;
@@ -115,8 +116,11 @@ class _addDialogState extends State<addDialog> {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 10,
+                    child: Column(children: [
+                      Text(DateFormat('HH:mm').format(starttime)),
+                    ]),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
@@ -175,15 +179,19 @@ class _addDialogState extends State<addDialog> {
   void delet() {
     setState(() {
       i++;
-      timeWidgets.removeAt(0);
-      print(timeWidgets.length);
+      timeWidgets.removeLast();
+      print(i);
     });
   }
 
   @override
   Widget addtime() {
     int i = timeWidgets.length - 1;
-    print("!@# $i");
+    DateTime? nowstarttime = starttime;
+    DateTime? nowendtime = endtime;
+    endtime = endtime.add(const Duration(hours: 2));
+    starttime = starttime.add(const Duration(hours: 2));
+
     return SizedBox(
       child: Column(
         children: [
@@ -215,9 +223,11 @@ class _addDialogState extends State<addDialog> {
                 top: 60,
                 child: TimePickerSpinnerPopUp(
                   mode: CupertinoDatePickerMode.time,
-                  initTime: DateTime(2023, 10, 3, 9, 0),
+                  initTime: starttime,
                   onChange: (dateTime) {
-                    starttime = dateTime;
+                    setState(() {
+                      starttime = dateTime;
+                    });
                   },
                 ),
               ),
@@ -229,9 +239,11 @@ class _addDialogState extends State<addDialog> {
                 top: 60,
                 child: TimePickerSpinnerPopUp(
                   mode: CupertinoDatePickerMode.time,
-                  initTime: DateTime(2023, 10, 3, 10, 0),
+                  initTime: endtime,
                   onChange: (dateTime) {
-                    endtime = dateTime;
+                    setState(() {
+                      starttime = dateTime;
+                    });
                   },
                 ),
               ),
@@ -249,7 +261,9 @@ class _addDialogState extends State<addDialog> {
                     backgroundColor: Colors.red),
                 onPressed: () {
                   setState(() {
-                    delet();
+                    print(endtime);
+
+                    //delet();
                     // 버튼 비활성화
                     //timeWidgets.removeLast();
                     // timeWidgets.removeAt(timeWidgets.indexOf());
@@ -257,7 +271,7 @@ class _addDialogState extends State<addDialog> {
                   });
                 },
                 child: const Text(
-                  '삭1제',
+                  '삭제',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),

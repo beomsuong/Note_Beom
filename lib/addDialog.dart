@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:time_picker_sheet/widget/sheet.dart';
-import 'package:time_picker_sheet/widget/time_picker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
+import 'package:intl/intl.dart';
 
 class addDialog extends StatefulWidget {
   final Function(String, int, DateTime, int) onAdd;
@@ -19,26 +19,6 @@ class _addDialogState extends State<addDialog> {
   @override
   void initState() {
     timeWidgets.add(addtime());
-  }
-
-  DateTime dateTimeSelected = DateTime.now();
-
-  void _openTimePickerSheet(BuildContext context) async {
-    final result = await TimePicker.show<DateTime?>(
-      context: context,
-      sheet: TimePickerSheet(
-        sheetTitle: 'Select meeting schedule',
-        minuteTitle: 'Minute',
-        hourTitle: 'Hour',
-        saveButtonText: 'Save',
-      ),
-    );
-
-    if (result != null) {
-      setState(() {
-        dateTimeSelected = result;
-      });
-    }
   }
 
   DateTime endtime = DateTime(
@@ -136,8 +116,11 @@ class _addDialogState extends State<addDialog> {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: 10,
+                    child: Column(children: [
+                      Text(DateFormat('HH:mm').format(starttime)),
+                    ]),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
@@ -193,28 +176,78 @@ class _addDialogState extends State<addDialog> {
 
   int i = 0;
   List<int> q = [1, 2, 3, 4];
-  void delet() async {
-    setState(() async {
+  void delet() {
+    setState(() {
       i++;
-      timeWidgets.removeAt(0);
-      print(timeWidgets.length);
-      var snapshot = await FirebaseFirestore.instance
-          .collection("!@#users12")
-          .doc("수학")
-          .get();
-      print("ZZ");
-      print(snapshot.data());
+      timeWidgets.removeLast();
+      print(i);
     });
   }
 
   @override
   Widget addtime() {
-    print("!@# $i");
+    int i = timeWidgets.length - 1;
+    DateTime? nowstarttime = starttime;
+    DateTime? nowendtime = endtime;
+    endtime = endtime.add(const Duration(hours: 2));
+    starttime = starttime.add(const Duration(hours: 2));
+
     return SizedBox(
       child: Column(
         children: [
-          Text(
-            '$i',
+          Row(
+            children: [
+              DropdownButton<String>(
+                value: classday,
+                icon: const Icon(Icons.arrow_downward),
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? value1) {
+                  setState(() {
+                    classday = value1!;
+                  });
+                },
+                items: list.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              Positioned(
+                left: 30,
+                top: 60,
+                child: TimePickerSpinnerPopUp(
+                  mode: CupertinoDatePickerMode.time,
+                  initTime: starttime,
+                  onChange: (dateTime) {
+                    setState(() {
+                      starttime = dateTime;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              Positioned(
+                left: 30,
+                top: 60,
+                child: TimePickerSpinnerPopUp(
+                  mode: CupertinoDatePickerMode.time,
+                  initTime: endtime,
+                  onChange: (dateTime) {
+                    setState(() {
+                      starttime = dateTime;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -228,16 +261,17 @@ class _addDialogState extends State<addDialog> {
                     backgroundColor: Colors.red),
                 onPressed: () {
                   setState(() {
-                    delet();
+                    print(endtime);
+
+                    //delet();
                     // 버튼 비활성화
-                    i++;
-                    // timeWidgets.removeAt();
+                    //timeWidgets.removeLast();
                     // timeWidgets.removeAt(timeWidgets.indexOf());
                     //timeWidgets.removeLast();
                   });
                 },
                 child: const Text(
-                  '삭1제',
+                  '삭제',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),

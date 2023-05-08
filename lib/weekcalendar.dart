@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:metro_beom/Appbar.dart';
 import 'package:time_planner/time_planner.dart';
-import 'addDialog.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'save2.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.orange,
     Colors.lime[600]
   ];
-
+  late List<List<dynamic>> data12;
   List<String> days = [
     //가장 빠른 요일을 저장하는 리스트
     DateFormat('MM-dd').format(DateTime.now()
@@ -53,8 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
     DateFormat('MM-dd').format(DateTime.now()
         .add(Duration(days: (DateTime.friday - DateTime.now().weekday) % 7))),
   ];
-
   List<TimePlannerTask> tasks = [];
+  void pqwe() {
+    print("!");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,17 +105,21 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) {
-              return addDialog(
-                //다이얼로그에서 입력받은 값
-                onAdd: (String className, int classday, DateTime starttime,
-                    int endtime) {
-                  setState(() {
-                    retunrdata(className, classday, starttime, endtime);
-                  });
-                },
+              return addDialog1(onAdd: (newTimes) {
+                pqwe();
+                print(newTimes);
+                setState(() {});
+              });
 
-                // onPressed: () => _addObject(context),
-              );
+              //  addDialog(
+              //다이얼로그에서 입력받은 값
+              //  onAdd: (String className, int classday, DateTime starttime,
+              //     int endtime) {
+              //  setState(() {
+              //    retunrdata(className, classday, starttime, endtime);
+//});
+              //  },
+              //  );
             },
           ),
         ));

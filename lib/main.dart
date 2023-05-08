@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:metro_beom/weekcalendar.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -14,7 +15,9 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterConfig.loadEnvVariables(); // 추가
   await Firebase.initializeApp();
+  FlutterConfig.get('apiKey');
 
   runApp(const MyApp());
 }
