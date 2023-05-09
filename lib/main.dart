@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const MyHomePage(title: '범짱브리타임'),
+      home: const Weekcalendar(title: '범짱브리타임'),
     );
   }
 }

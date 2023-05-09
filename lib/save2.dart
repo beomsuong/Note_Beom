@@ -2,34 +2,25 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 
 class addDialog1 extends StatefulWidget {
-  final Function(List<List<dynamic>>) onAdd;
+  final Function(Map<String, List<List<dynamic>>>) onAdd;
   const addDialog1({Key? key, required this.onAdd}) : super(key: key);
 
   @override
   State<addDialog1> createState() => _addDialog1State();
 }
 
-String classname = '월';
-String classday = '월';
-List<String> list = <String>['월', '화', '수', '목', '금'];
+Map<String, List<List<dynamic>>> returndata = {};
+String classname = '수업명을 입력하세요';
+String classday = '월'; //기본 요일
+List<String> list = <String>['월', '화', '수', '목', '금']; // 요일 저장 변수
 Map<String, int> map = {'월': 0, '화': 1, '수': 2, '목': 3, '금': 4};
 
+//요일을 int로 변환하기 위한 map
 class _addDialog1State extends State<addDialog1> {
   List<List<dynamic>> times = [
-    [1, Time(hour: 8, minute: 0), Time(hour: 9, minute: 0)],
-    [2, Time(hour: 10, minute: 30), Time(hour: 11, minute: 30)],
-    [3, Time(hour: 13, minute: 0), Time(hour: 14, minute: 0)],
+    //시간 저장 변수
+    [0, Time(hour: 9, minute: 0), Time(hour: 10, minute: 0)],
   ];
-  String formatTimes(List<List<Time>> times) {
-    final sb = StringBuffer();
-    for (final timeList in times) {
-      for (final time in timeList) {
-        sb.write('${time.hour}:${time.minute} ${time.period.name} ');
-      }
-      sb.writeln();
-    }
-    return sb.toString();
-  }
 
   void onTimeChanged(int outerIndex, int innerIndex, Time newTime) {
     setState(() {
@@ -38,9 +29,10 @@ class _addDialog1State extends State<addDialog1> {
   }
 
   void addTime() {
+    //시간 추가 함수
     setState(() {
       times.add([
-        1,
+        0,
         Time(hour: 9, minute: 0),
         Time(hour: 10, minute: 0),
       ]);
@@ -48,9 +40,24 @@ class _addDialog1State extends State<addDialog1> {
   }
 
   void removeTime(int index) {
+    //시간 삭제 함수
     setState(() {
       times.removeAt(index);
     });
+  }
+
+  void convertdata() {
+    //데이터를 넘길 시 저장된 데이터 형식을 변환하여 넘기는 변수
+    returndata[classname] ??= [];
+    for (List<dynamic> time in times) {
+      List<dynamic> convertedTime = [
+        time[0],
+        time[1].hour,
+        time[1].minute,
+        (time[2].hour - time[1].hour) * 60 + (time[2].minute - time[1].minute)
+      ];
+      returndata[classname]?.add(convertedTime);
+    }
   }
 
   @override
@@ -70,9 +77,11 @@ class _addDialog1State extends State<addDialog1> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TextField(
-                        onChanged: (text) {},
+                        onChanged: (text) {
+                          classname = text;
+                        },
                         decoration: const InputDecoration(
-                          labelText: '수업 이름',
+                          labelText: '수업을 입력하세요',
                           border: OutlineInputBorder(),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
@@ -134,9 +143,26 @@ class _addDialog1State extends State<addDialog1> {
                                                 onChange: (newTime) {
                                                   onTimeChanged(
                                                       outerIndex, 1, newTime);
+
+                                                  if (times[outerIndex][1]
+                                                          .hour <
+                                                      22) {
+                                                    //22시보다 적으면 그냥 종료 시간에 +1
+                                                    times[outerIndex][2] = Time(
+                                                      hour: times[outerIndex][1]
+                                                              .hour +
+                                                          1,
+                                                      minute: times[outerIndex]
+                                                              [1]
+                                                          .minute,
+                                                    );
+                                                  } else {
+                                                    times[outerIndex][2] = Time(
+                                                        hour: 23, minute: 59);
+                                                  }
                                                 },
                                                 minuteInterval:
-                                                    TimePickerInterval.FIVE,
+                                                    TimePickerInterval.ONE,
                                                 // Optional onChange to receive value as DateTime
                                                 onChangeDateTime: (dateTime) {
                                                   debugPrint(
@@ -151,9 +177,7 @@ class _addDialog1State extends State<addDialog1> {
                                                 .secondary,
                                           ),
                                           child: Text(
-                                            '${times[outerIndex][1].hour}:${times[outerIndex][1].minute}${times[outerIndex][1].minute < 10 ? "0" : ""}${times[outerIndex][1].hour < 12 ? "am" : "pm"}',
-
-                                            // '${times[outerIndex][0].hour}:${times[outerIndex][0].minute} ${times[outerIndex][0].period.name}',
+                                            '${times[outerIndex][1].hour}:${times[outerIndex][1].minute < 10 ? "0" : ""}${times[outerIndex][1].minute}${times[outerIndex][1].hour < 12 ? "am" : "pm"}',
                                             style: const TextStyle(
                                                 color: Colors.white),
                                           ),
@@ -177,9 +201,32 @@ class _addDialog1State extends State<addDialog1> {
                                                 onChange: (newTime) {
                                                   onTimeChanged(
                                                       outerIndex, 2, newTime);
+                                                  if (times[outerIndex][2]
+                                                          .hour >
+                                                      1) {
+                                                    //22시보다 적으면 그냥 종료 시간에 +1
+                                                    times[outerIndex][1] = Time(
+                                                      hour: times[outerIndex][2]
+                                                              .hour -
+                                                          1,
+                                                      minute: times[outerIndex]
+                                                              [1]
+                                                          .minute,
+                                                    );
+                                                  } else {
+                                                    times[outerIndex][1] = Time(
+                                                        hour: 00, minute: 00);
+                                                  }
+                                                  if (times[outerIndex][2] ==
+                                                      Time(
+                                                          hour: 00,
+                                                          minute: 00)) {
+                                                    times[outerIndex][2] = Time(
+                                                        hour: 0, minute: 1);
+                                                  }
                                                 },
                                                 minuteInterval:
-                                                    TimePickerInterval.FIVE,
+                                                    TimePickerInterval.ONE,
                                                 // Optional onChange to receive value as DateTime
                                                 onChangeDateTime: (dateTime) {
                                                   debugPrint(
@@ -194,9 +241,7 @@ class _addDialog1State extends State<addDialog1> {
                                                 .secondary,
                                           ),
                                           child: Text(
-                                            '${times[outerIndex][2].hour}:${times[outerIndex][2].minute}${times[outerIndex][2].minute < 10 ? "0" : ""}${times[outerIndex][2].hour < 12 ? "am" : "pm"}',
-
-                                            //'${times[outerIndex][1].hour}:${times[outerIndex][1].minute} ${times[outerIndex][1].period.name}',
+                                            '${times[outerIndex][2].hour}:${times[outerIndex][2].minute < 10 ? "0" : ""}${times[outerIndex][2].minute}${times[outerIndex][2].hour < 12 ? "am" : "pm"}',
                                             style: const TextStyle(
                                                 color: Colors.white),
                                           ),
@@ -253,8 +298,9 @@ class _addDialog1State extends State<addDialog1> {
                                   const Color.fromARGB(255, 61, 184, 225),
                             ),
                             onPressed: () {
-                              print("확인 $times");
-                              Navigator.of(context).pop(times);
+                              convertdata();
+                              widget.onAdd(returndata);
+                              Navigator.of(context).pop(returndata);
                             },
                             child: const Text(
                               '확인',
@@ -284,7 +330,6 @@ class _addDialog1State extends State<addDialog1> {
                           ),
                         ],
                       ),
-                      Text('$times'),
                     ],
                   ),
                 ),

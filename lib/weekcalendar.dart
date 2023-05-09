@@ -7,8 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'save2.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({
+class Weekcalendar extends StatefulWidget {
+  const Weekcalendar({
     Key? key,
     required this.title,
   }) : super(key: key);
@@ -16,7 +16,7 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _WeekcalendarState createState() => _WeekcalendarState();
 }
 
 late DateTime starttime;
@@ -31,7 +31,7 @@ Map<String, List<List<dynamic>>> datas = {
   ]
 }; //데이터는 이렇게 여러게로 저장할래요
 
-class _MyHomePageState extends State<MyHomePage> {
+class _WeekcalendarState extends State<Weekcalendar> {
   List<Color?> colors = [
     Colors.purple,
     Colors.blue,
@@ -54,10 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
         .add(Duration(days: (DateTime.friday - DateTime.now().weekday) % 7))),
   ];
   List<TimePlannerTask> tasks = [];
-  void pqwe() {
-    print("!");
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,20 +102,10 @@ class _MyHomePageState extends State<MyHomePage> {
             context: context,
             builder: (BuildContext context) {
               return addDialog1(onAdd: (newTimes) {
-                pqwe();
-                print(newTimes);
-                setState(() {});
+                setState(() {
+                  retunrdata(newTimes);
+                });
               });
-
-              //  addDialog(
-              //다이얼로그에서 입력받은 값
-              //  onAdd: (String className, int classday, DateTime starttime,
-              //     int endtime) {
-              //  setState(() {
-              //    retunrdata(className, classday, starttime, endtime);
-//});
-              //  },
-              //  );
             },
           ),
         ));
@@ -134,10 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
       final usercol =
           FirebaseFirestore.instance.collection("!@#users12").doc(key);
       usercol.set({});
-
+      i++;
       for (final value in datas[key]!) {
-        i++;
-
         final usercol =
             FirebaseFirestore.instance.collection("!@#users12").doc(key);
         usercol.update({
@@ -148,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
         int minutes = value[2];
         tasks.add(
           TimePlannerTask(
-            color: colors[Random().nextInt(colors.length)],
+            color: colors[i - 1],
             dateTime: TimePlannerDateTime(
                 day: value[0], hour: value[1], minutes: value[2]),
             minutesDuration: value[3],
@@ -156,7 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: () {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text('You click on $key')));
-              print(datas);
               tasks.removeWhere((task) =>
                   task.dateTime.day == value[0] &&
                   task.dateTime.hour == value[1] &&
@@ -166,7 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
               if (datas[key]?.isEmpty ?? false) {
                 datas.remove(key);
               }
-              print(datas);
               setState(() {});
             },
             child: Text(
@@ -182,46 +164,47 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void retunrdata(
-      //데이터를 추가하는 부분
-      String classname,
-      int classday,
-      DateTime starttime,
-      int endtime) {
+    Map<String, List<List<dynamic>>> adddatas,
+    //데이터를 추가하는 부분
+  ) {
     setState(() {
-      datas[classname] = [
-        [1, starttime.hour, starttime.minute, endtime]
-      ];
-      tasks.add(
-        TimePlannerTask(
-          color: colors[Random().nextInt(colors.length)],
-          dateTime: TimePlannerDateTime(
-              day: classday, hour: starttime.hour, minutes: starttime.minute),
-          minutesDuration: endtime,
-          daysDuration: 1,
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('You click on $classname ')));
-            print(datas);
-            tasks.removeWhere((task) =>
-                task.dateTime.day == classday &&
-                task.dateTime.hour == starttime.hour &&
-                task.dateTime.minutes == starttime.minute);
-            datas[classname]?.removeWhere((value) =>
-                value[0] == classday &&
-                value[1] == starttime.hour &&
-                value[2] == starttime.minute);
-            if (datas[classname]?.isEmpty ?? false) {
-              datas.remove(classname);
-            }
-            print(datas);
-            setState(() {});
-          },
-          child: Text(
-            classname,
-            style: TextStyle(color: Colors.grey[350], fontSize: 12),
-          ),
-        ),
-      );
+      datas.addAll(adddatas);
+      for (var key in datas.keys) {
+        for (final value in datas[key]!) {
+          i++;
+
+          int day = value[0];
+          int hour = value[1];
+          int minutes = value[2];
+          tasks.add(
+            TimePlannerTask(
+              color: colors[Random().nextInt(colors.length)],
+              dateTime: TimePlannerDateTime(
+                  day: value[0], hour: value[1], minutes: value[2]),
+              minutesDuration: value[3],
+              daysDuration: 1,
+              onTap: () {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('You click on $key')));
+                tasks.removeWhere((task) =>
+                    task.dateTime.day == value[0] &&
+                    task.dateTime.hour == value[1] &&
+                    task.dateTime.minutes == value[2]);
+                datas[key]?.removeWhere((value) =>
+                    value[0] == day && value[1] == hour && value[2] == minutes);
+                if (datas[key]?.isEmpty ?? false) {
+                  datas.remove(key);
+                }
+                setState(() {});
+              },
+              child: Text(
+                key,
+                style: TextStyle(color: Colors.grey[350], fontSize: 12),
+              ),
+            ),
+          );
+        }
+      }
     });
   }
 }
