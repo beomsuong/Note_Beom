@@ -1,19 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:metro_beom/Appbar.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'save2.dart';
 
 class Weekcalendar extends StatefulWidget {
-  const Weekcalendar({
-    Key? key,
-    required this.title,
-  }) : super(key: key);
-
-  final String title;
+  const Weekcalendar({Key? key}) : super(key: key);
 
   @override
   _WeekcalendarState createState() => _WeekcalendarState();
@@ -57,44 +51,42 @@ class _WeekcalendarState extends State<Weekcalendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          centerTitle: true,
+        body: SizedBox(
+          child: Center(
+            child: TimePlanner(
+                startHour: 9,
+                endHour: 18,
+                style: TimePlannerStyle(
+                  // cellHeight: 30,
+                  //cellWidth: 60,
+                  showScrollBar: true,
+                ),
+                headers: [
+                  TimePlannerTitle(
+                    title: "monday",
+                    date: days[0].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "tuesday",
+                    date: days[1].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "wednesday",
+                    date: days[2].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "thursday",
+                    date: days[3].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "friday",
+                    date: days[4].toString(),
+                  ),
+                ],
+                tasks: tasks),
+          ),
         ),
-        body: Center(
-          child: TimePlanner(
-              startHour: 9,
-              endHour: 18,
-              style: TimePlannerStyle(
-                // cellHeight: 30,
-                //cellWidth: 60,
-                showScrollBar: true,
-              ),
-              headers: [
-                TimePlannerTitle(
-                  title: "monday",
-                  date: days[0].toString(),
-                ),
-                TimePlannerTitle(
-                  title: "tuesday",
-                  date: days[1].toString(),
-                ),
-                TimePlannerTitle(
-                  title: "wednesday",
-                  date: days[2].toString(),
-                ),
-                TimePlannerTitle(
-                  title: "thursday",
-                  date: days[3].toString(),
-                ),
-                TimePlannerTitle(
-                  title: "friday",
-                  date: days[4].toString(),
-                ),
-              ],
-              tasks: tasks),
-        ),
-        bottomNavigationBar: btmappbar(),
+        // bottomNavigationBar: btmappbar(),
         floatingActionButton: FloatingActionButton(
           tooltip: 'Add random task',
           child: const Icon(Icons.add),
