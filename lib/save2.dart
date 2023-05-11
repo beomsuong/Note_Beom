@@ -300,6 +300,7 @@ class _addDialog1State extends State<addDialog1> {
                             onPressed: () {
                               convertdata();
                               widget.onAdd(returndata);
+                              returndata.clear();
                               Navigator.of(context).pop(returndata);
                             },
                             child: const Text(

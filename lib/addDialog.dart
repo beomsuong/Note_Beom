@@ -17,9 +17,7 @@ class _addDialogState extends State<addDialog> {
   DateTime starttime =
       DateTime(2023, 10, 3, 9, 0); //DateTime(DateTime.now().hour);
   @override
-  void initState() {
-    timeWidgets.add(addtime());
-  }
+  void initState() {}
 
   DateTime endtime = DateTime(
       2023, 10, 3, 10, 0); //DateTime.now().add(const Duration(hours: 1));
@@ -180,15 +178,11 @@ class _addDialogState extends State<addDialog> {
     setState(() {
       i++;
       timeWidgets.removeLast();
-      print(i);
     });
   }
 
   @override
   Widget addtime() {
-    int i = timeWidgets.length - 1;
-    DateTime? nowstarttime = starttime;
-    DateTime? nowendtime = endtime;
     endtime = endtime.add(const Duration(hours: 2));
     starttime = starttime.add(const Duration(hours: 2));
 
@@ -261,8 +255,6 @@ class _addDialogState extends State<addDialog> {
                     backgroundColor: Colors.red),
                 onPressed: () {
                   setState(() {
-                    print(endtime);
-
                     //delet();
                     // 버튼 비활성화
                     //timeWidgets.removeLast();

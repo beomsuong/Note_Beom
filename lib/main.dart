@@ -4,6 +4,8 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:metro_beom/memo.dart';
 import 'package:metro_beom/weekcalendar.dart';
+import 'provider/mydata.dart';
+import 'package:provider/provider.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
@@ -21,7 +23,12 @@ Future<void> main() async {
 
   FlutterConfig.get('apiKey');
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Mydata(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,28 +45,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
-}
-
-class GradientText extends StatelessWidget {
-  const GradientText({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'CouserMic',
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        foreground: Paint()
-          ..shader = const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.blue, Color.fromARGB(142, 141, 5, 187)],
-          ).createShader(
-            const Rect.fromLTWH(50.0, 0.0, 200.0, 0.0),
-          ),
-      ),
-    );
-  }
 }
 
 class _MyHomePageState extends State<MyHomePage> {

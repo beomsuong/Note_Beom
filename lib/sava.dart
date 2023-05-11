@@ -1,284 +1,197 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
+import 'package:metro_beom/provider/mydata.dart';
+import 'package:provider/provider.dart';
+import 'package:time_planner/time_planner.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'save2.dart';
 
-class addDialog extends StatefulWidget {
-  final Function(String, int, DateTime, int) onAdd;
-  const addDialog({Key? key, required this.onAdd}) : super(key: key);
+class Weekcalendar extends StatefulWidget {
+  const Weekcalendar({Key? key}) : super(key: key);
 
   @override
-  State<addDialog> createState() => _addDialogState();
+  _WeekcalendarState createState() => _WeekcalendarState();
 }
 
-int i = 1;
+late Mydata data;
+late DateTime starttime;
+late DateTime endtime;
+Map<String, List<List<dynamic>>> datas = {
+  '수학': [
+    [1, 9, 0, 60],
+    [2, 9, 0, 60],
+  ],
+  '과학': [
+    [3, 9, 0, 60],
+  ]
+}; //데이터는 이렇게 여러게로 저장할래요
 
-class _addDialogState extends State<addDialog> {
-  DateTime starttime =
-      DateTime(2023, 10, 3, 9, 0); //DateTime(DateTime.now().hour);
-  @override
-  void initState() {
-    timeWidgets.add(addtime());
-  }
-
-  DateTime endtime = DateTime(
-      2023, 10, 3, 10, 0); //DateTime.now().add(const Duration(hours: 1));
-
-  String classname = '월';
-  String classday = '월';
-  List<String> list = <String>['월', '화', '수', '목', '금'];
-  Map<String, int> map = {'월': 0, '화': 1, '수': 2, '목': 3, '금': 4};
-  List<Widget> timeWidgets = [];
+class _WeekcalendarState extends State<Weekcalendar> {
+  List<Color?> colors = [
+    Colors.purple,
+    Colors.blue,
+    Colors.green,
+    Colors.orange,
+    Colors.lime[600]
+  ];
+  late List<List<dynamic>> data12;
+  List<String> days = [
+    //가장 빠른 요일을 저장하는 리스트
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.monday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.tuesday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now().add(
+        Duration(days: (DateTime.wednesday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.thursday - DateTime.now().weekday) % 7))),
+    DateFormat('MM-dd').format(DateTime.now()
+        .add(Duration(days: (DateTime.friday - DateTime.now().weekday) % 7))),
+  ];
+  List<TimePlannerTask> tasks = [];
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(builder: (context, setState) {
-      return SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: AlertDialog(
-          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          //Dialog Main Title
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextField(
-                onChanged: (text) {
-                  setState(() {
-                    classname = text;
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: '수업 이름',
-                  border: OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(80),
-                    ), //둥글게
-                  ),
-                  filled: true,
-                  fillColor: Color.fromARGB(255, 204, 199, 191),
+    return Scaffold(
+        body: SizedBox(
+          child: Center(
+            child: TimePlanner(
+                startHour: 9,
+                endHour: 18,
+                style: TimePlannerStyle(
+                  // cellHeight: 30,
+                  //cellWidth: 60,
+                  showScrollBar: true,
                 ),
-              ),
-              Column(
-                children: [
-                  Column(children: timeWidgets),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        foregroundColor: Colors.black87,
-                        backgroundColor: Colors.red),
-                    onPressed: () {
-                      setState(() {
-                        // 버튼 비활성화
-
-                        // timeWidgets.removeAt(timeWidgets.indexOf());
-                        //timeWidgets.removeLast();
-                      });
-                    },
-                    child: const Text(
-                      '삭제',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                headers: [
+                  TimePlannerTitle(
+                    title: "monday",
+                    date: days[0].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "tuesday",
+                    date: days[1].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "wednesday",
+                    date: days[2].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "thursday",
+                    date: days[3].toString(),
+                  ),
+                  TimePlannerTitle(
+                    title: "friday",
+                    date: days[4].toString(),
                   ),
                 ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color.fromARGB(255, 61, 184, 225),
-                    ),
-                    onPressed: timeWidgets.length >= 5
-                        ? null
-                        : () {
-                            setState(() {
-                              // 버튼 비활성화
-                              timeWidgets.add(addtime());
-                            });
-                          },
-                    child: const Text(
-                      '추가',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                    child: Column(children: [
-                      Text(DateFormat('HH:mm').format(starttime)),
-                    ]),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        //버튼을 둥글게 처리
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color.fromARGB(255, 61, 184, 225),
-                    ),
-                    onPressed: () {
-                      widget.onAdd(
-                        classname,
-                        map[classday]!,
-                        starttime,
-                        endtime.difference(starttime).inMinutes,
-                      );
-                      Navigator.of(context).pop();
-                    }, //로그인 함수 호출
-                    child: const Text(
-                      '확인',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        //버튼을 둥글게 처리
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color.fromARGB(255, 61, 184, 225),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }, //로그인 함수 호출
-                    child: const Text(
-                      '종료',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                tasks: tasks),
           ),
         ),
-      );
-    });
+        // bottomNavigationBar: btmappbar(),
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'Add random task',
+          child: const Icon(Icons.add),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return addDialog1(onAdd: (newTimes) {
+                setState(() {
+                  retunrdata(newTimes);
+                });
+              });
+            },
+          ),
+        ));
   }
 
   int i = 0;
-  List<int> q = [1, 2, 3, 4];
-  void delet() {
-    setState(() {
-      i++;
-      timeWidgets.removeLast();
-      print(i);
-    });
+  List<String> list = <String>['월', '화', '수', '목', '금'];
+  String? dropdownValue;
+  @override
+  void initState() {
+    super.initState();
+    dropdownValue = list.first;
   }
 
   @override
-  Widget addtime() {
-    int i = timeWidgets.length - 1;
-    DateTime? nowstarttime = starttime;
-    DateTime? nowendtime = endtime;
-    endtime = endtime.add(const Duration(hours: 2));
-    starttime = starttime.add(const Duration(hours: 2));
+  void didChangeDependencies() {
+    data = Provider.of<Mydata>(context);
+    super.didChangeDependencies();
+    for (var key in data.datas.keys) {
+      final usercol =
+          FirebaseFirestore.instance.collection("!@#users12").doc(key);
+      usercol.set({});
+      i++;
+      for (final value in data.datas[key]!) {
+        final usercol =
+            FirebaseFirestore.instance.collection("!@#users12").doc(key);
+        usercol.update({
+          i.toString(): value,
+        });
+        int day = value[0];
+        int hour = value[1];
+        int minutes = value[2];
+      }
+    }
+  }
 
-    return SizedBox(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              DropdownButton<String>(
-                value: classday,
-                icon: const Icon(Icons.arrow_downward),
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? value1) {
-                  setState(() {
-                    classday = value1!;
-                  });
-                },
-                items: list.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              Positioned(
-                left: 30,
-                top: 60,
-                child: TimePickerSpinnerPopUp(
-                  mode: CupertinoDatePickerMode.time,
-                  initTime: starttime,
-                  onChange: (dateTime) {
-                    setState(() {
-                      starttime = dateTime;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(
-                width: 15,
-              ),
-              Positioned(
-                left: 30,
-                top: 60,
-                child: TimePickerSpinnerPopUp(
-                  mode: CupertinoDatePickerMode.time,
-                  initTime: endtime,
-                  onChange: (dateTime) {
-                    setState(() {
-                      starttime = dateTime;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    foregroundColor: Colors.black87,
-                    backgroundColor: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    print(endtime);
+  @override
+  void retunrdata(
+    Map<String, List<List<dynamic>>> adddatas,
+    //데이터를 추가하는 부분
+  ) {
+    setState(() {
+      data.retunrdatas(adddatas);
+      datas.addAll(adddatas);
 
-                    //delet();
-                    // 버튼 비활성화
-                    //timeWidgets.removeLast();
-                    // timeWidgets.removeAt(timeWidgets.indexOf());
-                    //timeWidgets.removeLast();
-                  });
+      i = 0;
+      for (int q = 0; q < tasks.length; q++) {
+        tasks.removeAt(q);
+      }
+      for (var key in data.datas.keys) {
+        i++;
+        if (i == colors.length) {
+          i = 0;
+        }
+        for (final value in data.datas[key]!) {
+          int day = value[0];
+          int hour = value[1];
+          int minutes = value[2];
+          tasks.add(
+            TimePlannerTask(
+              color: colors[i],
+              dateTime: TimePlannerDateTime(
+                  day: value[0], hour: value[1], minutes: value[2]),
+              minutesDuration: value[3],
+              daysDuration: 1,
+              child: GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('You click on $key')));
+
+                  tasks.removeWhere((task) =>
+                      task.dateTime.day == value[0] &&
+                      task.dateTime.hour == value[1] &&
+                      task.dateTime.minutes == value[2]);
+                  data.removedata(key, day, hour, minutes);
+
+                  setState(() {});
                 },
-                child: const Text(
-                  '삭제',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                child: Text(
+                  key,
+                  style: TextStyle(color: Colors.grey[350], fontSize: 12),
                 ),
               ),
-            ],
-          ),
-        ],
-      ),
-    );
+            ),
+          );
+        }
+      }
+      setState(() {
+        data.notifyListeners();
+        print("나다");
+
+        print(data.datas);
+      });
+    });
   }
 }

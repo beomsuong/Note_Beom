@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:metro_beom/provider/mydata.dart';
+import 'package:provider/provider.dart';
 
 class Memo extends StatefulWidget {
   const Memo({super.key});
@@ -10,8 +12,12 @@ class Memo extends StatefulWidget {
 class _MemoState extends State<Memo> {
   @override
   Widget build(BuildContext context) {
+    Mydata data = Provider.of<Mydata>(context);
     return Scaffold(
-      body: ListView(),
-    );
+        body: Center(
+      child: Text(
+        context.watch<Mydata>().datas.toString(),
+      ),
+    ));
   }
 }
