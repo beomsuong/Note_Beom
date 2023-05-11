@@ -6,6 +6,7 @@ import 'package:metro_beom/memo.dart';
 import 'package:metro_beom/weekcalendar.dart';
 import 'provider/mydata.dart';
 import 'package:provider/provider.dart';
+import 'camera.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
@@ -18,10 +19,9 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterConfig.loadEnvVariables(); // 추가
+  await FlutterConfig.loadEnvVariables();
   await Firebase.initializeApp();
-
-  FlutterConfig.get('apiKey');
+  FlutterConfig.get('apiKey'); //API 키 가져오기
 
   runApp(
     ChangeNotifierProvider(
@@ -51,8 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     //각 페이지 이동 시 사용하는 리스트형 위젯 각 페이지 클래스를 실행한다
-    const Weekcalendar(),
-    const Memo(),
+    const Weekcalendar(), //시간표 화면
+    const Memo(), //메모화면
+    const Camera() //카메라 화면
   ];
 
   void _onItemTapped(int index) {

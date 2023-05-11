@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'save2.dart';
+import 'addDialog.dart';
 
 class Weekcalendar extends StatefulWidget {
   const Weekcalendar({Key? key}) : super(key: key);
@@ -16,23 +16,16 @@ class Weekcalendar extends StatefulWidget {
 late Mydata data;
 late DateTime starttime;
 late DateTime endtime;
-Map<String, List<List<dynamic>>> datas = {
-  '수학': [
-    [1, 9, 0, 60],
-    [2, 9, 0, 60],
-  ],
-  '과학': [
-    [3, 9, 0, 60],
-  ]
-}; //데이터는 이렇게 여러게로 저장할래요
 
 class _WeekcalendarState extends State<Weekcalendar> {
   List<Color?> colors = [
+    // 색깔을 저장하는 변수
     Colors.purple,
     Colors.blue,
     Colors.green,
     Colors.orange,
-    Colors.lime[600]
+    Colors.lime[600],
+    Colors.pink[200]
   ];
   late List<List<dynamic>> data12;
   List<String> days = [
@@ -48,7 +41,7 @@ class _WeekcalendarState extends State<Weekcalendar> {
     DateFormat('MM-dd').format(DateTime.now()
         .add(Duration(days: (DateTime.friday - DateTime.now().weekday) % 7))),
   ];
-  List<TimePlannerTask> tasks = [];
+  List<TimePlannerTask> tasks = []; //화면에 시간표를 추가하는 List
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +56,7 @@ class _WeekcalendarState extends State<Weekcalendar> {
                   showScrollBar: true,
                 ),
                 headers: [
+                  //각 요일 아래 해당 요일이 오는 가장 빠른 날짜 표기
                   TimePlannerTitle(
                     title: "monday",
                     date: days[0].toString(),
@@ -89,14 +83,15 @@ class _WeekcalendarState extends State<Weekcalendar> {
         ),
         // bottomNavigationBar: btmappbar(),
         floatingActionButton: FloatingActionButton(
-          tooltip: 'Add random task',
+          tooltip: '시간표를 추가합니다',
           child: const Icon(Icons.add),
           onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) {
-              return addDialog1(onAdd: (newTimes) {
+              return addDialog(onAdd: (newTimes) {
+                // 다이얼로그에서  입력한 수업명, 시간 List를 받아옴
                 setState(() {
-                  retunrdata(newTimes);
+                  retunrdata(newTimes); //전달 받은 데이터를 시간표에 추가한다
                 });
               });
             },
@@ -127,17 +122,14 @@ class _WeekcalendarState extends State<Weekcalendar> {
         usercol.update({
           i.toString(): value,
         });
-        int day = value[0];
-        int hour = value[1];
-        int minutes = value[2];
       }
     }
     for (var key in data.datas.keys) {
       i++;
-      if (i == colors.length) {
-        i = 0;
-      }
       for (final value in data.datas[key]!) {
+        if (i >= colors.length - 2) {
+          i = 0;
+        }
         int day = value[0];
         int hour = value[1];
         int minutes = value[2];
@@ -152,12 +144,10 @@ class _WeekcalendarState extends State<Weekcalendar> {
               onTap: () {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('You click on $key')));
-
                 tasks.removeWhere((task) =>
                     task.dateTime.day == value[0] &&
                     task.dateTime.hour == value[1] &&
                     task.dateTime.minutes == value[2]);
-
                 setState(() {
                   data.removedata(key, day, hour, minutes);
                 });
@@ -180,15 +170,13 @@ class _WeekcalendarState extends State<Weekcalendar> {
   ) {
     setState(() {
       data.retunrdatas(adddatas);
-      datas.addAll(adddatas);
-
       i = 0;
       for (int q = 0; q < tasks.length; q++) {
         tasks.removeAt(q);
       }
       for (var key in data.datas.keys) {
         i++;
-        if (i == colors.length) {
+        if (i >= colors.length - 1) {
           i = 0;
         }
         for (final value in data.datas[key]!) {
@@ -204,16 +192,15 @@ class _WeekcalendarState extends State<Weekcalendar> {
               daysDuration: 1,
               child: GestureDetector(
                 onTap: () {
+                  //터치시 해당 데이터를 삭제함
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('You click on $key')));
-
                   tasks.removeWhere((task) =>
                       task.dateTime.day == value[0] &&
                       task.dateTime.hour == value[1] &&
                       task.dateTime.minutes == value[2]);
-
                   setState(() {
-                    data.removedata(key, day, hour, minutes);
+                    data.removedata(key, day, hour, minutes); //
                   });
                 },
                 child: Text(
@@ -225,12 +212,6 @@ class _WeekcalendarState extends State<Weekcalendar> {
           );
         }
       }
-      setState(() {
-        data.notifyListeners();
-        print("나다");
-
-        print(data.datas);
-      });
     });
   }
 }
