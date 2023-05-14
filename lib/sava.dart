@@ -1,197 +1,93 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:metro_beom/provider/mydata.dart';
+import 'package:flutter_config/flutter_config.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:metro_beom/memo.dart';
+import 'package:metro_beom/weekcalendar.dart';
+import 'provider/mydata.dart';
 import 'package:provider/provider.dart';
-import 'package:time_planner/time_planner.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'save2.dart';
+import 'camera.dart';
 
-class Weekcalendar extends StatefulWidget {
-  const Weekcalendar({Key? key}) : super(key: key);
-
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
   @override
-  _WeekcalendarState createState() => _WeekcalendarState();
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
 
-late Mydata data;
-late DateTime starttime;
-late DateTime endtime;
-Map<String, List<List<dynamic>>> datas = {
-  '수학': [
-    [1, 9, 0, 60],
-    [2, 9, 0, 60],
-  ],
-  '과학': [
-    [3, 9, 0, 60],
-  ]
-}; //데이터는 이렇게 여러게로 저장할래요
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterConfig.loadEnvVariables();
+  await Firebase.initializeApp();
+  FlutterConfig.get('apiKey'); //API 키 가져오기
 
-class _WeekcalendarState extends State<Weekcalendar> {
-  List<Color?> colors = [
-    Colors.purple,
-    Colors.blue,
-    Colors.green,
-    Colors.orange,
-    Colors.lime[600]
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Mydata(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _currentIndex = 0;
+  final List<Widget> _pages = [
+    //각 페이지 이동 시 사용하는 리스트형 위젯 각 페이지 클래스를 실행한다
+    const Weekcalendar(), //시간표 화면
+    const Memo(), //메모화면
+    const Camera() //카메라 화면
   ];
-  late List<List<dynamic>> data12;
-  List<String> days = [
-    //가장 빠른 요일을 저장하는 리스트
-    DateFormat('MM-dd').format(DateTime.now()
-        .add(Duration(days: (DateTime.monday - DateTime.now().weekday) % 7))),
-    DateFormat('MM-dd').format(DateTime.now()
-        .add(Duration(days: (DateTime.tuesday - DateTime.now().weekday) % 7))),
-    DateFormat('MM-dd').format(DateTime.now().add(
-        Duration(days: (DateTime.wednesday - DateTime.now().weekday) % 7))),
-    DateFormat('MM-dd').format(DateTime.now()
-        .add(Duration(days: (DateTime.thursday - DateTime.now().weekday) % 7))),
-    DateFormat('MM-dd').format(DateTime.now()
-        .add(Duration(days: (DateTime.friday - DateTime.now().weekday) % 7))),
-  ];
-  List<TimePlannerTask> tasks = [];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SizedBox(
-          child: Center(
-            child: TimePlanner(
-                startHour: 9,
-                endHour: 18,
-                style: TimePlannerStyle(
-                  // cellHeight: 30,
-                  //cellWidth: 60,
-                  showScrollBar: true,
-                ),
-                headers: [
-                  TimePlannerTitle(
-                    title: "monday",
-                    date: days[0].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "tuesday",
-                    date: days[1].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "wednesday",
-                    date: days[2].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "thursday",
-                    date: days[3].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "friday",
-                    date: days[4].toString(),
-                  ),
-                ],
-                tasks: tasks),
+      appBar: AppBar(
+        title: const Text('범짱브리타임'),
+        centerTitle: true,
+      ),
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: '시간표',
           ),
-        ),
-        // bottomNavigationBar: btmappbar(),
-        floatingActionButton: FloatingActionButton(
-          tooltip: 'Add random task',
-          child: const Icon(Icons.add),
-          onPressed: () => showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return addDialog1(onAdd: (newTimes) {
-                setState(() {
-                  retunrdata(newTimes);
-                });
-              });
-            },
+          BottomNavigationBarItem(
+            icon: Icon(Icons.note_alt_outlined),
+            label: '메모하기',
           ),
-        ));
-  }
-
-  int i = 0;
-  List<String> list = <String>['월', '화', '수', '목', '금'];
-  String? dropdownValue;
-  @override
-  void initState() {
-    super.initState();
-    dropdownValue = list.first;
-  }
-
-  @override
-  void didChangeDependencies() {
-    data = Provider.of<Mydata>(context);
-    super.didChangeDependencies();
-    for (var key in data.datas.keys) {
-      final usercol =
-          FirebaseFirestore.instance.collection("!@#users12").doc(key);
-      usercol.set({});
-      i++;
-      for (final value in data.datas[key]!) {
-        final usercol =
-            FirebaseFirestore.instance.collection("!@#users12").doc(key);
-        usercol.update({
-          i.toString(): value,
-        });
-        int day = value[0];
-        int hour = value[1];
-        int minutes = value[2];
-      }
-    }
-  }
-
-  @override
-  void retunrdata(
-    Map<String, List<List<dynamic>>> adddatas,
-    //데이터를 추가하는 부분
-  ) {
-    setState(() {
-      data.retunrdatas(adddatas);
-      datas.addAll(adddatas);
-
-      i = 0;
-      for (int q = 0; q < tasks.length; q++) {
-        tasks.removeAt(q);
-      }
-      for (var key in data.datas.keys) {
-        i++;
-        if (i == colors.length) {
-          i = 0;
-        }
-        for (final value in data.datas[key]!) {
-          int day = value[0];
-          int hour = value[1];
-          int minutes = value[2];
-          tasks.add(
-            TimePlannerTask(
-              color: colors[i],
-              dateTime: TimePlannerDateTime(
-                  day: value[0], hour: value[1], minutes: value[2]),
-              minutesDuration: value[3],
-              daysDuration: 1,
-              child: GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('You click on $key')));
-
-                  tasks.removeWhere((task) =>
-                      task.dateTime.day == value[0] &&
-                      task.dateTime.hour == value[1] &&
-                      task.dateTime.minutes == value[2]);
-                  data.removedata(key, day, hour, minutes);
-
-                  setState(() {});
-                },
-                child: Text(
-                  key,
-                  style: TextStyle(color: Colors.grey[350], fontSize: 12),
-                ),
-              ),
-            ),
-          );
-        }
-      }
-      setState(() {
-        data.notifyListeners();
-        print("나다");
-
-        print(data.datas);
-      });
-    });
+          BottomNavigationBarItem(
+            icon: Icon(Icons.camera_alt),
+            label: '사진',
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,7 +1,4 @@
 {
-  
-
-
   "project_info": {
     "project_number": "579851181022",
     "firebase_url": "https://note-beom-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -18,13 +15,13 @@
       },
       "oauth_client": [
         {
-          "client_id": "579851181022-4dd9mrr0tlu5hao30im5ite0s0r6v871.apps.googleusercontent.com",
+          "client_id": "579851181022-s30pt8ke0hdran6hjh2mnma5ruu784e3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "apiKey2"
+          "current_key": "AIzaSyBKuZ1F8vxhjDQeyLmuG2hllssegK99OjM"
         }
       ],
       "services": {

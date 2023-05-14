@@ -1,23 +1,12 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:metro_beom/memo.dart';
-import 'package:metro_beom/weekcalendar.dart';
-import 'provider/mydata.dart';
 import 'package:provider/provider.dart';
-import 'camera.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'provider/mydata.dart';
 
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  // Override behavior methods and getters like dragDevices
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
-}
+import 'main_screen.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
   await Firebase.initializeApp();
@@ -37,57 +26,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0;
-  final List<Widget> _pages = [
-    //각 페이지 이동 시 사용하는 리스트형 위젯 각 페이지 클래스를 실행한다
-    const Weekcalendar(), //시간표 화면
-    const Memo(), //메모화면
-    const Camera() //카메라 화면
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('범짱브리타임'),
-        centerTitle: true,
-      ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '시간표',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.note_alt_outlined),
-            label: '메모하기',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.camera_alt),
-            label: '사진',
-          ),
-        ],
-      ),
+      title: 'Chatting app',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const LoginSignupScreen(),
     );
   }
 }

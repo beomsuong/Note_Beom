@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:metro_beom/provider/mydata.dart';
 import 'package:provider/provider.dart';
+import 'memolist.dart';
 
 class Memo extends StatefulWidget {
   const Memo({Key? key}) : super(key: key);
@@ -11,9 +12,17 @@ class Memo extends StatefulWidget {
 
 class _MemoState extends State<Memo> {
   Widget room(String a) {
+    final data = Provider.of<Mydata>(context);
     // 톡방을 리스트로 보여주는 함수
     return InkWell(
       onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Memolist(
+                    classname: a,
+                  )),
+        );
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(a)));
       },
       child: SizedBox(
@@ -34,15 +43,10 @@ class _MemoState extends State<Memo> {
                             fontSize: 15, fontWeight: FontWeight.w600),
                         // 톡방 제목은 굵게
                       ),
-                      const Text('가장최근 메모가 나오게 할거에요'),
+                      Text(data.memodatas[a]!.last.toString()),
                     ],
                   ),
                 ),
-              ),
-              const Divider(
-                thickness: 2,
-                height: 3,
-                color: Colors.black,
               ),
             ],
           ),

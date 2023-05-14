@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class Mydata with ChangeNotifier {
   final Map<String, List<List<dynamic>>> _datas = {}; //수업의 날짜 데이터를 저장한다
-  final Map<String, List<String>> _memodatas = {}; //수업의 메모 데이터를 저장한다.
+  final Map<String, List<String>> _memodatas = {
+    'q': ['메모임', 'ㅁㄴㅇ'],
+  }; //수업의 메모 데이터를 저장한다.
 
   Map<String, List<List<dynamic>>> get datas => _datas;
   Map<String, List<String>> get memodatas => _memodatas;
