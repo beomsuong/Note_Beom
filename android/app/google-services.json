@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "579851181022",
+    "firebase_url": "https://note-beom-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "note-beom",
+    "storage_bucket": "note-beom.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579851181022:android:e9ac4ff4fc282640965b4f",
+        "android_client_info": {
+          "package_name": "com.example.metro_beom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579851181022-s30pt8ke0hdran6hjh2mnma5ruu784e3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKuZ1F8vxhjDQeyLmuG2hllssegK99OjM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579851181022-4dd9mrr0tlu5hao30im5ite0s0r6v871.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "579851181022-6m2ujeg3p0e0j9f7o04jfsd67rjj8q57.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.metroBeom"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
