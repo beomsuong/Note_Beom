@@ -1,3 +1,4 @@
+//초기 로그인 및 회원가입
 import 'package:flutter/material.dart';
 import 'palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -492,34 +493,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               ),
             ),
             //전송버튼
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeIn,
-              top: isSignupScreen
-                  ? MediaQuery.of(context).size.height - 125
-                  : MediaQuery.of(context).size.height - 165,
-              right: 0,
-              left: 0,
-              child: Column(
-                children: [
-                  Text(isSignupScreen ? 'or Signup with' : 'or Signin with'),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextButton.icon(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(155, 40),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: Palette.googleColor),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Google'),
-                  ),
-                ],
-              ),
-            ),
+
             //구글 로그인 버튼
           ],
         ),

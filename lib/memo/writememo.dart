@@ -1,3 +1,4 @@
+//수업에 대한 메모 작성
 import 'package:flutter/material.dart';
 import 'package:metro_beom/provider/mydata.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,7 @@ class _WritememoState extends State<Writememo> {
   }
 
   void addmemo(BuildContext context) {
+    //메모를 저장
     final data = context.read<Mydata>();
     data.memodataadd(classname, _controller.text);
   }

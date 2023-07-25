@@ -1,3 +1,4 @@
+// 프로그램의 데이터 관리
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,8 @@ class Mydata with ChangeNotifier {
       ['내용2', 123],
     ],
   }; //수업의 메모 데이터를 저장한다.
-  Map<String, List<Map<String, dynamic>>> uploaddata = {};
+  Map<String, List<Map<String, dynamic>>> uploaddata =
+      {}; //파이어베이스에 업로드 시 변형하여 저장
   Map<String, List<List<dynamic>>> get datas => _datas;
   Map<String, List<List<dynamic>>> get memodatas => _memodatas;
 
@@ -48,6 +50,7 @@ class Mydata with ChangeNotifier {
   }
 
   void memodataremove(String key, String text) {
+    //특정 수업의 해당 메모 삭제
     memodatas[key]!.removeWhere((text) => true);
   }
 

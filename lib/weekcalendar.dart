@@ -1,3 +1,4 @@
+//시간표 화면
 import 'package:flutter/material.dart';
 import 'package:metro_beom/provider/mydata.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +16,8 @@ class Weekcalendar extends StatefulWidget {
 
 final _authentication = FirebaseAuth.instance;
 late Mydata data;
-late DateTime starttime;
-late DateTime endtime;
+late DateTime starttime; //수업 시작 시간
+late DateTime endtime; //수업 종료 시간
 final User? user = _authentication.currentUser;
 
 class _WeekcalendarState extends State<Weekcalendar> {
@@ -56,9 +57,9 @@ class _WeekcalendarState extends State<Weekcalendar> {
   @override
   void didChangeDependencies() {
     data = Provider.of<Mydata>(context); //처음 시작시 같이 실행됨
+    const CircularProgressIndicator();
     //앱 전체 데이터 클래스를 받아옴
     super.didChangeDependencies();
-
     for (var key in data.datas.keys) {
       i++;
       for (final value in data.datas[key]!) {
@@ -100,8 +101,8 @@ class _WeekcalendarState extends State<Weekcalendar> {
 
   void retunrdata(
     Map<String, List<List<dynamic>>> adddatas,
-    //데이터를 추가하는 부분
   ) {
+    //데이터를 추가하는 부분
     setState(() {
       data.retunrscheduledata(adddatas); //데이터 저장
       for (var key in data.datas.keys) {

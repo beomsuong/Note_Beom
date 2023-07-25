@@ -1,3 +1,4 @@
+//수업에 해당하는 메모 조회
 import 'package:flutter/material.dart';
 import 'package:metro_beom/memo/writememo.dart';
 import 'package:metro_beom/provider/mydata.dart';
@@ -11,8 +12,9 @@ class Memolist extends StatefulWidget {
 }
 
 bool i = true; //색깔을 반전시키는 변수
-bool delete = false;
+bool delete = false; //삭제 모드 클릭 시
 List<Color> _color = [
+  //메모 색깔
   Colors.deepOrange[100]!,
   Colors.red,
   Colors.amber[50]!,
@@ -34,13 +36,14 @@ class _MemolistState extends State<Memolist> {
     data = Provider.of<Mydata>(context); // didChangeDependencies에서 초기화
   }
 
-  Widget room(String a) {
+  Widget memo(String a) {
     // 메모 리스트 표시
     return Column(
       children: [
         InkWell(
           onTap: () {
             if (delete) {
+              //삭제 모드 누르고 해당 메모 클릭 시
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(a)));
               showDialog(
@@ -140,12 +143,13 @@ class _MemolistState extends State<Memolist> {
       body: ListView(
         children: data.memodatas[widget.classname]!.map((valueList) {
           i = !i;
-          return room(valueList[0]);
+          return memo(valueList[0]);
         }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: '시간표를 추가합니다',
         onPressed: () {
+          delete = !true;
           Navigator.push(
             context,
             MaterialPageRoute(

@@ -1,3 +1,4 @@
+//기본 화면
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
