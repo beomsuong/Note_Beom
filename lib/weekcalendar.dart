@@ -57,7 +57,7 @@ class _WeekcalendarState extends State<Weekcalendar> {
   @override
   void didChangeDependencies() {
     data = Provider.of<Mydata>(context); //처음 시작시 같이 실행됨
-    const CircularProgressIndicator();
+
     //앱 전체 데이터 클래스를 받아옴
     super.didChangeDependencies();
     for (var key in data.datas.keys) {
