@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(
-      const Duration(seconds: 4),
+      const Duration(seconds: 2),
       () => Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const MyHomePage()),
@@ -32,6 +32,10 @@ class _SplashScreenState extends State<SplashScreen> {
     Mydata data = Provider.of<Mydata>(context); // Moved Provider.of here
 
     return Container(
+      //decoration: BoxDecoration(
+      //  image: DecorationImage(
+      //      image: AssetImage('assets/splash.gif'), fit: BoxFit.contain),
+      //  ),
       child: Stack(
         children: <Widget>[
           Positioned(
@@ -49,6 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),
+          const Text("로딩중 입니다.")
         ],
       ),
     );
