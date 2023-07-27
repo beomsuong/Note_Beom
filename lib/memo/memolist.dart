@@ -68,6 +68,7 @@ class _MemolistState extends State<Memolist> {
                         onPressed: () {
                           data.memodataremove(classname, a);
                           Navigator.of(context).pop();
+                          setState(() {});
                         },
                         child: const Text('삭제'),
                       ),

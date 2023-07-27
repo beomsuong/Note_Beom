@@ -47,11 +47,27 @@ class Mydata with ChangeNotifier {
 
   void memodataadd(String key, String text) {
     memodatas[key]!.add([text, 123]);
+    memodataupdatefirebase();
   }
 
   void memodataremove(String key, String text) {
     //특정 수업의 해당 메모 삭제
-    memodatas[key]!.removeWhere((text) => true);
+    memodatas[key]!.removeWhere((item) => item[0] == text);
+    memodataupdatefirebase();
+  }
+
+  void memodataupdatefirebase() {
+    //데이터 변경시 파이어베이스 수정내역 올리기
+    final userDoc = FirebaseFirestore.instance
+        .collection('User')
+        .doc(user.currentUser?.uid)
+        .collection('memo');
+
+    for (var data in memodatas.keys) {
+      userDoc.doc(data).set({
+        for (var e in memodatas[data]!) '${memodatas[data]!.indexOf(e)}': e
+      });
+    }
   }
 
   void retunrscheduledata(Map<String, List<List<dynamic>>> adddata) {

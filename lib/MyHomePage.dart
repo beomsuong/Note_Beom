@@ -71,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('범짱브리타임'),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
