@@ -6,15 +6,10 @@ import 'package:intl/intl.dart';
 
 class Mydata with ChangeNotifier {
   final user = FirebaseAuth.instance;
-  final DateTime today = DateTime.now();
+  late DateTime today = DateTime.now();
   late String formattedDate;
   final Map<String, List<List<dynamic>>> _datas = {}; //수업의 날짜 데이터를 저장한다
-  final Map<String, List<List<dynamic>>> _memodatas = {
-    'xzc1': [
-      ['내ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ용', 13],
-      ['내용2', 123],
-    ],
-  }; //수업의 메모 데이터를 저장한다.
+  final Map<String, List<List<dynamic>>> _memodatas = {}; //수업의 메모 데이터를 저장한다.
   Map<String, List<Map<String, dynamic>>> uploaddata =
       {}; //파이어베이스에 업로드 시 변형하여 저장
   Map<String, List<List<dynamic>>> get datas => _datas;
@@ -31,6 +26,7 @@ class Mydata with ChangeNotifier {
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         data.forEach((key, value) {
+          memodatas[doc.id] = []; //데이터를 추가할때 빈 메모공간 추가
           if (_datas[doc.id] == null) {
             _datas[doc.id] = [];
           }
@@ -46,7 +42,8 @@ class Mydata with ChangeNotifier {
   }
 
   void memodataadd(String key, String text) {
-    memodatas[key]!.add([text, 123]);
+    today = DateTime.now();
+    memodatas[key]!.add([text, today]);
     memodataupdatefirebase();
   }
 
@@ -72,6 +69,7 @@ class Mydata with ChangeNotifier {
 
   void retunrscheduledata(Map<String, List<List<dynamic>>> adddata) {
     //데이터가 추가되어 넘어온 경우
+    memodatas[adddata.keys.first] = []; //데이터를 추가할때 빈 메모공간 추가
     if (adddata.isNotEmpty) {
       datas.addAll(adddata);
     }

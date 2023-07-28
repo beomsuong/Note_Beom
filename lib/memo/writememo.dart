@@ -13,12 +13,22 @@ class Writememo extends StatefulWidget {
 
 class _WritememoState extends State<Writememo> {
   late String classname;
+  String dropdownValue = 'One'; // dropdownValue 변수 추가
   final _controller = TextEditingController();
+  late Mydata data;
 
   @override
   void initState() {
     super.initState();
     classname = widget.classname;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    data = Provider.of<Mydata>(context);
+    dropdownValue =
+        data.memodatas.keys.first; // 첫 번째 key를 DropdownButton의 value로 설정
   }
 
   void addmemo(BuildContext context) {
@@ -31,9 +41,26 @@ class _WritememoState extends State<Writememo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('$classname에 메모하기'),
+        title: DropdownButton<String>(
+          value: dropdownValue,
+          icon: const Icon(Icons.arrow_downward),
+          onChanged: (String? newValue) {
+            setState(() {
+              dropdownValue = newValue!;
+            });
+          },
+          items: data.memodatas.keys
+              .toList()
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
         centerTitle: true,
         actions: <Widget>[
+          // actions 속성을 사용하여 IconButton을 AppBar의 오른쪽에 추가
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {

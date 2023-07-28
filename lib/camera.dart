@@ -16,7 +16,7 @@ class _CameraState extends State<Camera> {
     return Scaffold(
         body: Center(
       child: Text(
-        context.watch<Mydata>().datas.toString(),
+        context.watch<Mydata>().memodatas.toString(),
       ),
     ));
   }

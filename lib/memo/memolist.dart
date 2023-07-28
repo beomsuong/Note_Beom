@@ -12,7 +12,7 @@ class Memolist extends StatefulWidget {
 }
 
 bool i = true; //색깔을 반전시키는 변수
-bool delete = false; //삭제 모드 클릭 시
+bool delete = true; //삭제 모드 클릭 시
 List<Color> _color = [
   //메모 색깔
   Colors.deepOrange[100]!,
@@ -141,12 +141,21 @@ class _MemolistState extends State<Memolist> {
           ),
         ],
       ),
-      body: ListView(
-        children: data.memodatas[widget.classname]!.map((valueList) {
-          i = !i;
-          return memo(valueList[0]);
-        }).toList(),
-      ),
+      body: data.memodatas[widget.classname]!.isNotEmpty //등록된 메모가 있는지
+          ? ListView(
+              //메모가 있을 때
+              children: data.memodatas[widget.classname]!.map((valueList) {
+                i = !i;
+                return memo(valueList[0]);
+              }).toList(),
+            )
+          : const Center(
+              //메모가 없을 떄
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [Text("등록된 메모가 없습니다! \n 메모를 추가하세요!")],
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         tooltip: '시간표를 추가합니다',
         onPressed: () {

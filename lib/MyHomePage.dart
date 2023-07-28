@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('범짱브리타임'),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false, //뒤로가기버튼 비활성화
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
