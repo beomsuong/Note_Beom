@@ -36,7 +36,7 @@ class _MemolistState extends State<Memolist> {
     data = Provider.of<Mydata>(context); // didChangeDependencies에서 초기화
   }
 
-  Widget memo(String a) {
+  Widget memo(String test) {
     // 메모 리스트 표시
     return Column(
       children: [
@@ -45,7 +45,7 @@ class _MemolistState extends State<Memolist> {
             if (delete) {
               //삭제 모드 누르고 해당 메모 클릭 시
               ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(a)));
+                  .showSnackBar(SnackBar(content: Text(test)));
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -55,7 +55,7 @@ class _MemolistState extends State<Memolist> {
                       child: ListBody(
                         //List Body를 기준으로 Text 설정
                         children: <Widget>[
-                          Text(a),
+                          Text(test),
                         ],
                       ),
                     ),
@@ -66,7 +66,7 @@ class _MemolistState extends State<Memolist> {
                           backgroundColor: Colors.red, // 버튼 배경색
                         ),
                         onPressed: () {
-                          data.memodataremove(classname, a);
+                          data.memodataremove(classname, test);
                           Navigator.of(context).pop();
                           setState(() {});
                         },
@@ -101,7 +101,7 @@ class _MemolistState extends State<Memolist> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            a,
+                            test,
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,

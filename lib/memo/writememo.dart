@@ -27,8 +27,7 @@ class _WritememoState extends State<Writememo> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     data = Provider.of<Mydata>(context);
-    dropdownValue =
-        data.memodatas.keys.first; // 첫 번째 key를 DropdownButton의 value로 설정
+    dropdownValue = classname; // 첫 번째 key를 DropdownButton의 value로 설정
   }
 
   void addmemo(BuildContext context) {
@@ -42,11 +41,13 @@ class _WritememoState extends State<Writememo> {
     return Scaffold(
       appBar: AppBar(
         title: DropdownButton<String>(
+          //다른 수업 메모도 가능하도록
           value: dropdownValue,
           icon: const Icon(Icons.arrow_downward),
           onChanged: (String? newValue) {
             setState(() {
               dropdownValue = newValue!;
+              classname = dropdownValue;
             });
           },
           items: data.memodatas.keys

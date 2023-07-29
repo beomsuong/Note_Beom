@@ -46,9 +46,8 @@ class _WeekcalendarState extends State<Weekcalendar> {
   ];
   List<TimePlannerTask> tasks = []; //화면에 시간표를 추가하는 List
 
-  int i = 0;
-  List<String> list = <String>['월', '화', '수', '목', '금'];
-  String? dropdownValue;
+  int i = 0; //색깔을 반전하는 변수
+  List<String> list = <String>['월', '화', '수', '목', '금']; //요일 리스트
   @override
   void initState() {
     super.initState();
@@ -194,8 +193,6 @@ class _WeekcalendarState extends State<Weekcalendar> {
             context: context,
             builder: (BuildContext context) {
               return addDialog(onAdd: (newTimes) {
-                print("받아온값");
-                print(newTimes);
                 // 다이얼로그에서  입력한 수업명, 시간 List를 받아옴
                 setState(() {
                   retunrdata(newTimes); //전달 받은 데이터를 시간표에 추가한다

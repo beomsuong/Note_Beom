@@ -1,3 +1,4 @@
+//수업 리스트를 확인하는 화면
 import 'package:flutter/material.dart';
 import 'package:metro_beom/provider/mydata.dart';
 import 'package:provider/provider.dart';
