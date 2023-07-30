@@ -147,59 +147,60 @@ class _WeekcalendarState extends State<Weekcalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SizedBox(
-          child: Center(
-            child: TimePlanner(
-                currentTimeAnimation: false,
-                startHour: 9,
-                endHour: 18,
-                style: TimePlannerStyle(
-                  // cellHeight: 30,
-                  //cellWidth: 60,
-                  showScrollBar: true,
-                ),
-                headers: [
-                  //각 요일 아래 해당 요일이 오는 가장 빠른 날짜 표기
-                  TimePlannerTitle(
-                    title: "monday",
-                    date: days[0].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "tuesday",
-                    date: days[1].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "wednesday",
-                    date: days[2].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "thursday",
-                    date: days[3].toString(),
-                  ),
-                  TimePlannerTitle(
-                    title: "friday",
-                    date: days[4].toString(),
-                  ),
-                ],
-                tasks: tasks),
-          ),
-        ),
-        // bottomNavigationBar: btmappbar(),
-        floatingActionButton: FloatingActionButton(
-          tooltip: '시간표를 추가합니다',
-          child: const Icon(Icons.add),
-          onPressed: () => showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return addDialog(onAdd: (newTimes) {
-                // 다이얼로그에서  입력한 수업명, 시간 List를 받아옴
-                setState(() {
-                  retunrdata(newTimes); //전달 받은 데이터를 시간표에 추가한다
-                });
-              });
-            },
-          ),
-        ));
+    return !data.scheduleloading
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
+            body: SizedBox(
+              child: Center(
+                child: TimePlanner(
+                    currentTimeAnimation: false,
+                    startHour: 9,
+                    endHour: 18,
+                    style: TimePlannerStyle(
+                      // cellHeight: 30,
+                      //cellWidth: 60,
+                      showScrollBar: true,
+                    ),
+                    headers: [
+                      //각 요일 아래 해당 요일이 오는 가장 빠른 날짜 표기
+                      TimePlannerTitle(
+                        title: "monday",
+                        date: days[0].toString(),
+                      ),
+                      TimePlannerTitle(
+                        title: "tuesday",
+                        date: days[1].toString(),
+                      ),
+                      TimePlannerTitle(
+                        title: "wednesday",
+                        date: days[2].toString(),
+                      ),
+                      TimePlannerTitle(
+                        title: "thursday",
+                        date: days[3].toString(),
+                      ),
+                      TimePlannerTitle(
+                        title: "friday",
+                        date: days[4].toString(),
+                      ),
+                    ],
+                    tasks: tasks),
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              tooltip: '시간표를 추가합니다',
+              child: const Icon(Icons.add),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return addDialog(onAdd: (newTimes) {
+                    // 다이얼로그에서  입력한 수업명, 시간 List를 받아옴
+                    setState(() {
+                      retunrdata(newTimes); //전달 받은 데이터를 시간표에 추가한다
+                    });
+                  });
+                },
+              ),
+            ));
   }
 }

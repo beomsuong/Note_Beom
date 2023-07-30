@@ -1,6 +1,6 @@
 //초기 로그인 및 회원가입
 import 'package:flutter/material.dart';
-import 'loading.dart';
+import 'package:metro_beom/MyHomePage.dart';
 import 'palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -457,7 +457,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               currentContext,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return const SplashScreen(); //로그인 성공
+                                  return const MyHomePage();
+                                  //return const SplashScreen(); //로그인 성공
                                 },
                               ),
                             );

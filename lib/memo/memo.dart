@@ -59,20 +59,22 @@ class Memo extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      body: ListView(
-        children: [
-          for (var key in data.datas.keys) schedule(key),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: '시간표를 추가합니다',
-        onPressed: () {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('메모를 추가합니다')));
-        },
-        child: const Icon(Icons.note_add_outlined),
-      ),
-    );
+    return !data.scheduleloading
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
+            body: ListView(
+              children: [
+                for (var key in data.datas.keys) schedule(key),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              tooltip: '시간표를 추가합니다',
+              onPressed: () {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('메모를 추가합니다')));
+              },
+              child: const Icon(Icons.note_add_outlined),
+            ),
+          );
   }
 }

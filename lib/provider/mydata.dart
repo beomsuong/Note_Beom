@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 
 class Mydata with ChangeNotifier {
   final user = FirebaseAuth.instance;
-  late DateTime today = DateTime.now();
   late String formattedDate;
   final Map<String, List<List<dynamic>>> _datas = {}; //수업의 날짜 데이터를 저장한다
   final Map<String, List<List<dynamic>>> _memodatas = {}; //수업의 메모 데이터를 저장한다.
@@ -14,15 +13,22 @@ class Mydata with ChangeNotifier {
       {}; //파이어베이스에 업로드 시 변형하여 저장
   Map<String, List<List<dynamic>>> get datas => _datas;
   Map<String, List<List<dynamic>>> get memodatas => _memodatas;
+  bool scheduleloading = false; //데이터 로딩 여부
+  late final firebaseuserschedule; //파이어베이스 유저 스케줄 경로
+  late final firebaseusersmemo; //파이어베이스 유저 메모 경로
 
   Mydata() {
     //생성 시  데이터를 받아와 저장
-    formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(today);
-    final userDoc = FirebaseFirestore.instance
+    formattedDate = DateFormat('MM-dd – kk:mm').format(DateTime.now());
+    firebaseuserschedule = FirebaseFirestore.instance
         .collection('User')
         .doc(user.currentUser?.uid)
         .collection('schedule');
-    userDoc.get().then((QuerySnapshot querySnapshot) {
+    firebaseusersmemo = FirebaseFirestore.instance
+        .collection('User')
+        .doc(user.currentUser?.uid)
+        .collection('memo');
+    firebaseuserschedule.get().then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         data.forEach((key, value) {
@@ -38,12 +44,14 @@ class Mydata with ChangeNotifier {
           ]);
         });
       }
+      scheduleloading = true;
+      notifyListeners(); //데이터 로딩이 완료되면
     });
   }
 
   void memodataadd(String key, String text) {
-    today = DateTime.now();
-    memodatas[key]!.add([text, today]);
+    formattedDate = DateFormat('MM-dd – kk:mm').format(DateTime.now());
+    memodatas[key]!.add([text, formattedDate]);
     memodataupdatefirebase();
   }
 
@@ -55,13 +63,8 @@ class Mydata with ChangeNotifier {
 
   void memodataupdatefirebase() {
     //데이터 변경시 파이어베이스 수정내역 올리기
-    final userDoc = FirebaseFirestore.instance
-        .collection('User')
-        .doc(user.currentUser?.uid)
-        .collection('memo');
-
     for (var data in memodatas.keys) {
-      userDoc.doc(data).set({
+      firebaseusersmemo.doc(data).set({
         for (var e in memodatas[data]!) '${memodatas[data]!.indexOf(e)}': e
       });
     }
@@ -79,11 +82,6 @@ class Mydata with ChangeNotifier {
 
   void scheduledataupdatefirebase() {
     //데이터 변경시 파이어베이스 수정내역 올리기
-    final userDoc = FirebaseFirestore.instance
-        .collection('User')
-        .doc(user.currentUser?.uid)
-        .collection('schedule');
-
     for (var data in datas.keys) {
       uploaddata[data] = [];
       if (datas[data] != null) {
@@ -96,7 +94,7 @@ class Mydata with ChangeNotifier {
           });
         }
       }
-      userDoc.doc(data).set({
+      firebaseuserschedule.doc(data).set({
         for (var e in uploaddata[data]!) '${uploaddata[data]!.indexOf(e)}': e
       });
     }
@@ -109,12 +107,8 @@ class Mydata with ChangeNotifier {
     notifyListeners();
     if (scheduledataempty()) {
       //날짜 데이터가 모두 지워진 경우
-      final userCollection = FirebaseFirestore.instance
-          .collection('User')
-          .doc(user.currentUser?.uid)
-          .collection('schedule')
-          .doc(key1); // document ID that you want to delete
-      userCollection.delete().then((_) {
+
+      firebaseuserschedule.doc(key1).delete().then((_) {
         print("날짜가 지워져서 해당 데이터 삭제");
       }).catchError((error) {
         print("삭제 실패: $error");
