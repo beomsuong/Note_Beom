@@ -42,7 +42,9 @@ class _addDialog1State extends State<addDialog> {
   void removeTime(int index) {
     //시간 삭제 함수
     setState(() {
-      times.removeAt(index);
+      if (times.length > 1) {
+        times.removeAt(index);
+      }
     });
   }
 
@@ -74,6 +76,7 @@ class _addDialog1State extends State<addDialog> {
               child: AlertDialog(
                 content: Center(
                   child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TextField(
@@ -227,7 +230,6 @@ class _addDialog1State extends State<addDialog> {
                                                 },
                                                 minuteInterval:
                                                     TimePickerInterval.ONE,
-                                                // Optional onChange to receive value as DateTime
                                                 onChangeDateTime: (dateTime) {
                                                   debugPrint(
                                                       "[debug datetime]: $dateTime");
@@ -249,7 +251,7 @@ class _addDialog1State extends State<addDialog> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(width: 15.0),
+                                  // const SizedBox(width: 15.0),
                                   IconButton(
                                     onPressed: () {
                                       removeTime(outerIndex);

@@ -32,7 +32,6 @@ class Mydata with ChangeNotifier {
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         data.forEach((key, value) {
-          memodatas[doc.id] = []; //데이터를 추가할때 빈 메모공간 추가
           if (_datas[doc.id] == null) {
             _datas[doc.id] = [];
           }
@@ -41,6 +40,23 @@ class Mydata with ChangeNotifier {
             value['hour'],
             value['minute'],
             value['value'],
+          ]);
+        });
+      }
+      scheduleloading = true;
+      notifyListeners(); //데이터 로딩이 완료되면
+    });
+    firebaseusersmemo.get().then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data.forEach((key, value) {
+          memodatas[doc.id] = []; //데이터를 추가할때 빈 메모공간 추가
+          if (_memodatas[doc.id] == null) {
+            _memodatas[doc.id] = [];
+          }
+          _memodatas[doc.id]?.add([
+            value['text'],
+            value['time'],
           ]);
         });
       }
@@ -63,9 +79,11 @@ class Mydata with ChangeNotifier {
 
   void memodataupdatefirebase() {
     //데이터 변경시 파이어베이스 수정내역 올리기
-    for (var data in memodatas.keys) {
+
+    for (var data in _memodatas.keys) {
       firebaseusersmemo.doc(data).set({
-        for (var e in memodatas[data]!) '${memodatas[data]!.indexOf(e)}': e
+        for (var e in _memodatas[data]!)
+          '${_memodatas[data]!.indexOf(e)}': {'text': e[0], 'time': e[1]}
       });
     }
   }
