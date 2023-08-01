@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:metro_beom/MyHomePage.dart';
 import 'palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:ui' as ui;
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class LoginSignupScreen extends StatefulWidget {
 class _LoginSignupScreenState extends State<LoginSignupScreen> {
   final _authentication = FirebaseAuth.instance;
 
-  bool isSignupScreen = false;
+  bool isSignupScreen = false; //로그인인지 회원가입인지
   final _formKey = GlobalKey<FormState>();
   String userName = '';
   String userEmail = '';
@@ -47,39 +48,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          text: 'Welcome',
-                          style: const TextStyle(
-                              letterSpacing: 1.0,
-                              fontSize: 25,
-                              color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text:
-                                  isSignupScreen ? ' to Yummy chat!' : ' back',
-                              style: const TextStyle(
-                                letterSpacing: 1.0,
-                                fontSize: 25,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      Text(
-                        isSignupScreen
-                            ? 'Signup to continue'
-                            : 'Signin to continue',
-                        style: const TextStyle(
-                          letterSpacing: 1.0,
-                          color: Colors.white,
-                        ),
-                      ),
+                      Text('Note Beom',
+                          style: TextStyle(
+                              foreground: Paint()
+                                ..shader = ui.Gradient.linear(
+                                    const Offset(0, 20),
+                                    const Offset(150, 20),
+                                    [Colors.blue, Colors.purple]),
+                              fontSize: 50)),
                     ],
                   ),
                 ),
@@ -471,7 +447,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                            colors: [Colors.orange, Colors.red],
+                            colors: [Colors.blue, Colors.purple],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight),
                         borderRadius: BorderRadius.circular(30),
