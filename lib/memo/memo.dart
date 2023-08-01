@@ -12,49 +12,54 @@ class Memo extends StatelessWidget {
     final data = Provider.of<Mydata>(context); // Provider로부터 Mydata 가져오기
 
     Widget schedule(String a) {
-      return InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Memolist(
-                      classname: a,
-                    )),
-          );
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(a)));
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this line
-          children: [
-            SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start, // 글자 왼쪽 정렬
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            a,
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w600),
-                          ),
-                          // Text(data.memodatas[a]!.last.toString()),
-                        ],
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color.fromARGB(255, 231, 226, 226)),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Memolist(
+                        classname: a,
+                      )),
+            );
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(a)));
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this line
+            children: [
+              SizedBox(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // 글자 왼쪽 정렬
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              a,
+                              style: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w600),
+                            ),
+                            // Text(data.memodatas[a]!.last.toString()),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            // const Divider(color: Colors.black, thickness: 1), // 수평 선
-          ],
+              // const Divider(color: Colors.black, thickness: 1), // 수평 선
+            ],
+          ),
         ),
       );
     }
