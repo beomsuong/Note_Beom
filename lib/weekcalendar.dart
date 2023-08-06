@@ -147,7 +147,7 @@ class _WeekcalendarState extends State<Weekcalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return !data.scheduleloading
+    return !data.scheduleloading //데이터 로딩이 완료되면
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
             body: SizedBox(

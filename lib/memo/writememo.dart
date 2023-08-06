@@ -40,6 +40,15 @@ class _WritememoState extends State<Writememo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue, Colors.purple],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         title: DropdownButton<String>(
           //다른 수업 메모도 가능하도록
           value: dropdownValue,

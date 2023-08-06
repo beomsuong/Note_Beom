@@ -72,6 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('범짱브리타임'),
         centerTitle: true,
         automaticallyImplyLeading: false, //뒤로가기버튼 비활성화
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue, Colors.purple],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

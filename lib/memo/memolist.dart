@@ -128,6 +128,15 @@ class _MemolistState extends State<Memolist> {
       appBar: AppBar(
         title: Text(widget.classname),
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue, Colors.purple],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(
